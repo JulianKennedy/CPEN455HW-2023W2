@@ -39,11 +39,12 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
             loss.backward()
             optimizer.step()
 
-        accuracy = classifier(model = model, data_loader = data_loader, device = device)
+        
         
     if args.en_wandb:
         wandb.log({mode + "-Average-BPD" : loss_tracker.get_mean()})
         wandb.log({mode + "-epoch": epoch})
+        accuracy = classifier(model = model, data_loader = data_loader, device = device)
         wandb.log({mode + "-accuracy": accuracy})
 
 if __name__ == '__main__':
