@@ -26,7 +26,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     
     for batch_idx, item in enumerate(tqdm(data_loader)):
         model_input, label = item
-        #convert label to tensor but label is written as "Class0, Class1, Class2"
+        # print(label)
         label = torch.tensor([int(label[0].split('Class')[1])], dtype=torch.int64)
         label = label.to(device)
         # print(item)
@@ -209,14 +209,14 @@ if __name__ == '__main__':
         
         # decrease learning rate
         scheduler.step()
-        train_or_test(model = model,
-                      data_loader = test_loader,
-                      optimizer = optimizer,
-                      loss_op = loss_op,
-                      device = device,
-                      args = args,
-                      epoch = epoch,
-                      mode = 'test')
+        # train_or_test(model = model,
+        #               data_loader = test_loader,
+        #               optimizer = optimizer,
+        #               loss_op = loss_op,
+        #               device = device,
+        #               args = args,
+        #               epoch = epoch,
+        #               mode = 'test')
         
         train_or_test(model = model,
                       data_loader = val_loader,
