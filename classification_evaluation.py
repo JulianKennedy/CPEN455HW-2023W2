@@ -99,7 +99,12 @@ if __name__ == '__main__':
     #Write your code here
     #You should replace the random classifier with your trained model
     #Begin of your code
-    model = PixelCNN(3, 256, 64, 5, 3)
+    #Load your model and evaluate the accuracy on the validation set
+    model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
+    # model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
+
+
+
     #End of your code
     
     model = model.to(device)
@@ -111,4 +116,29 @@ if __name__ == '__main__':
     acc = classifier(model = model, data_loader = dataloader, device = device)
     print(f"Accuracy: {acc}")
         
-        
+
+    #write a function to get the labels of all the images in the dataset andwrite it to a csv file
+
+    # get the labels of all the images in the dataset
+
+    # write the labels to a csv file
+
+    # get the labels of all the images in the dataset
+    # all_labels = []
+    # for batch_idx, item in enumerate(tqdm(dataloader)):
+    #     model_input, categories = item
+    #     model_input = model_input.to(device)
+    #     original_label = [my_bidict[item] for item in categories]
+    #     original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
+    #     answer = get_label(model, model_input, device)
+    #     all_labels.append(answer)
+    # all_labels = torch.cat(all_labels, dim=0)
+    # # write the labels to a csv file
+    # import csv
+    # with open('labels.csv', mode='w') as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(all_labels)
+
+    # print("Labels written to labels.csv")
+
+
