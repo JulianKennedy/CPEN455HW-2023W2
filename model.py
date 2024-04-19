@@ -133,6 +133,12 @@ class PixelCNN(nn.Module):
         u  = u_list.pop()
         ul = ul_list.pop()
 
+        # add the label embeddings to u and ul
+
+        u = u + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(u.size())
+        ul = ul + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(ul.size())
+
+
         for i in range(3):
             # resnet block
             u, ul = self.down_layers[i](u, ul, u_list, ul_list)
@@ -140,23 +146,8 @@ class PixelCNN(nn.Module):
             # upscale (only twice)
             if i != 2 :
                 u  = self.upsize_u_stream[i](u)
-                ul = self.upsize_ul_stream[i](ul)
-
+                ul = self.upsize_ul_stream[i](ul)   
         
-        # add the embedding to the input
-        label_embedding = self.embedded_labels(labels)
-        ul = ul + label_embedding.unsqueeze(2).unsqueeze(3).expand(-1, -1, x.shape[2], x.shape[3]).to(x.device)
-        
-        
-
-
-
-
-
-
-
-
-
 
         x_out = self.nin_out(F.elu(ul))
 

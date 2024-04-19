@@ -27,8 +27,9 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     for batch_idx, item in enumerate(tqdm(data_loader)):
         model_input, label = item
         # print(label)
-        label = torch.tensor([int(label[0].split('Class')[1])], dtype=torch.int64)
-        label = label.to(device)
+        #get the label tensor by taking the last character of the string
+        label = [int(item[-1]) for item in label]
+        label = torch.tensor(label, dtype=torch.int64).to(device)
         # print(item)
         model_input = model_input.to(device)
         model_output = model(model_input, label)
