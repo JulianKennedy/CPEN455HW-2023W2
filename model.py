@@ -96,6 +96,11 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
+        embedded_labels = torch.nn.Embedding(4, nr_filters)
+        self.embedded_labels = embedded_labels
+
+
+
 
     def forward(self, x, sample=False):
         # similar as done in the tf repo :
@@ -137,6 +142,22 @@ class PixelCNN(nn.Module):
             if i != 2 :
                 u  = self.upsize_u_stream[i](u)
                 ul = self.upsize_ul_stream[i](ul)
+
+        
+        # add the embedding to the input
+        ul = ul + self.embedded_labels(torch.randint(0, 4, (x.shape[0],)).to(x.device)
+                                        ).unsqueeze(2).unsqueeze(3).expand(-1, -1, x.shape[2], x.shape[3])
+        
+        
+
+
+
+
+
+
+
+
+
 
         x_out = self.nin_out(F.elu(ul))
 

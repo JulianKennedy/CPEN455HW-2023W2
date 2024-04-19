@@ -12,6 +12,7 @@ from tqdm import tqdm
 from pprint import pprint
 import argparse
 from pytorch_fid.fid_score import calculate_fid_given_paths
+from classification_evaluation import classifier
 
 
 def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, mode = 'training'):
@@ -24,19 +25,25 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     loss_tracker = mean_tracker()
     
     for batch_idx, item in enumerate(tqdm(data_loader)):
-        model_input, _ = item
+        model_input, label = item
+        #convert label to tensor but label is written as "Class0, Class1, Class2"
+        label = torch.tensor([int(label[0].split('Class')[1])], dtype=torch.int64)
+        # print(item)
         model_input = model_input.to(device)
-        model_output = model(model_input)
+        model_output = model(model_input, label)
         loss = loss_op(model_input, model_output)
         loss_tracker.update(loss.item()/deno)
         if mode == 'training':
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
+        accuracy = classifier(model = model, data_loader = data_loader, device = device)
         
     if args.en_wandb:
         wandb.log({mode + "-Average-BPD" : loss_tracker.get_mean()})
         wandb.log({mode + "-epoch": epoch})
+        wandb.log({mode + "-accuracy": accuracy})
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -119,7 +126,7 @@ if __name__ == '__main__':
 
     #set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    kwargs = {'num_workers':1, 'pin_memory':True, 'drop_last':True}
+    kwargs = {'num_workers':0, 'pin_memory':True, 'drop_last':True}
 
     # set data
     if "mnist" in args.dataset:
