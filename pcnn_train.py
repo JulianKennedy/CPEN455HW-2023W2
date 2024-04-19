@@ -28,6 +28,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         model_input, label = item
         #convert label to tensor but label is written as "Class0, Class1, Class2"
         label = torch.tensor([int(label[0].split('Class')[1])], dtype=torch.int64)
+        label = label.to(device)
         # print(item)
         model_input = model_input.to(device)
         model_output = model(model_input, label)
