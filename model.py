@@ -118,6 +118,13 @@ class PixelCNN(nn.Module):
         x = x if sample else torch.cat((x, self.init_padding), 1)
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+
+        # embed the labels to the start
+        embedded_labels = self.embedded_labels(labels)
+        embedded_labels = embedded_labels.unsqueeze(2).unsqueeze(3).expand(-1, -1, x.size(2), x.size(3))
+        u_list[0] = u_list[0] + embedded_labels
+        ul_list[0] = ul_list[0] + embedded_labels
+
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
@@ -141,11 +148,6 @@ class PixelCNN(nn.Module):
             if i != 2 :
                 u  = self.upsize_u_stream[i](u)
                 ul = self.upsize_ul_stream[i](ul)   
-
-        
-        # add the label embeddings to the end of the network
-        u = u + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(u.size())
-        ul = ul + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(ul.size())
 
         x_out = self.nin_out(F.elu(ul))
 
