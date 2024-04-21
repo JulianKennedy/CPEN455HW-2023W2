@@ -42,11 +42,11 @@ def get_label(model, model_input, device):
         # print(labels_tensor.shape)
         if i == 0:
             logits = model(model_input, labels_tensor)
-            image_loss = discretized_mix_logistic_loss_image(model_input, logits).unsqueeze(1)
+            image_loss = discretized_mix_logistic_loss(model_input, logits, True).unsqueeze(1)
             
         else:
             logits_1 = model(model_input, labels_tensor)
-            image_loss = torch.cat((image_loss, discretized_mix_logistic_loss_image(model_input, logits_1).unsqueeze(1)), dim=1)
+            image_loss = torch.cat((image_loss, discretized_mix_logistic_loss(model_input, logits_1, True).unsqueeze(1)), dim=1)
     
     predicted_label  = torch.argmin(image_loss, dim=1)
 
@@ -93,7 +93,7 @@ if __name__ == '__main__':
                                                             mode = args.mode, 
                                                             transform=ds_transforms), 
                                              batch_size=args.batch_size, 
-                                             shuffle=True, 
+                                             shuffle=False, 
                                              **kwargs)
 
     #Write your code here

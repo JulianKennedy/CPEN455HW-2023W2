@@ -119,12 +119,6 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-        # embed the labels to the start
-        embedded_labels = self.embedded_labels(labels)
-        embedded_labels = embedded_labels.unsqueeze(2).unsqueeze(3).expand(-1, -1, x.size(2), x.size(3))
-        u_list[0] = u_list[0] + embedded_labels
-        ul_list[0] = ul_list[0] + embedded_labels
-
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
@@ -139,6 +133,10 @@ class PixelCNN(nn.Module):
         ###    DOWN PASS    ###
         u  = u_list.pop()
         ul = ul_list.pop()
+
+        #embed the labels in the middle
+        u = u + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(u.size())
+        ul = ul + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(ul.size())
 
         for i in range(3):
             # resnet block
