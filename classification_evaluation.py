@@ -13,6 +13,8 @@ from dataset import *
 from tqdm import tqdm
 from pprint import pprint
 import argparse
+import csv
+import os
 NUM_CLASSES = len(my_bidict)
 
 # Write your code here
@@ -22,7 +24,7 @@ NUM_CLASSES = len(my_bidict)
 def get_label(model, model_input, device):
     #Begin of your code
     # run th model on the input and get the predicted label
-    # call the discretized logistic mixture loss image
+    # call the discretized logistic mixture loss
     # and return the predicted label
 
     # run the model through the forward pass
@@ -100,7 +102,7 @@ if __name__ == '__main__':
     #You should replace the random classifier with your trained model
     #Begin of your code
     #Load your model and evaluate the accuracy on the validation set
-    model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
+    model = PixelCNN(nr_resnet=2, nr_filters=120, input_channels=3, nr_logistic_mix=5)
     # model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
 
 
@@ -110,35 +112,34 @@ if __name__ == '__main__':
     model = model.to(device)
     #Attention: the path of the model is fixed to 'models/conditional_pixelcnn.pth'
     #You should save your model to this path
-    model.load_state_dict(torch.load('models/conditional_pixelcnn.pth'))
+    model.load_state_dict(torch.load('models/kennedy5_pcnn_cpen455_from_scratch_499.pth'))
     model.eval()
     print('model parameters loaded')
-    acc = classifier(model = model, data_loader = dataloader, device = device)
-    print(f"Accuracy: {acc}")
+    # acc = classifier(model = model, data_loader = dataloader, device = device)
+    # print(f"Accuracy: {acc}")
+
+    image_names = dataloader.dataset.samples 
+
+    print(len(image_names))
+
+    with open('predictions.csv', 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["id","label"])
+
+    for batch_idx, item in enumerate(tqdm(dataloader)):
+        model_input, categories = item
+        model_input = model_input.to(device)
+        answer = get_label(model, model_input, device)
+        #send the image, label to csv file
+        #split the img_path to start at the string img
+        img_path, categories = image_names[batch_idx]
+        print(img_path)
+        image_name = img_path.split("test/")[-1]
+        print(image_name)
+        label = answer[0].item()
+        #dont append new lines to csv
+        with open('predictions.csv', 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([image_name, label])
         
-
-    #write a function to get the labels of all the images in the dataset andwrite it to a csv file
-
-    # get the labels of all the images in the dataset
-
-    # write the labels to a csv file
-
-    # get the labels of all the images in the dataset
-    # all_labels = []
-    # for batch_idx, item in enumerate(tqdm(dataloader)):
-    #     model_input, categories = item
-    #     model_input = model_input.to(device)
-    #     original_label = [my_bidict[item] for item in categories]
-    #     original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
-    #     answer = get_label(model, model_input, device)
-    #     all_labels.append(answer)
-    # all_labels = torch.cat(all_labels, dim=0)
-    # # write the labels to a csv file
-    # import csv
-    # with open('labels.csv', mode='w') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(all_labels)
-
-    # print("Labels written to labels.csv")
-
 

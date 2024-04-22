@@ -12,6 +12,7 @@ from model import *
 from dataset import *
 import os
 import torch
+import csv
 # You should modify this sample function to get the generated images from your model
 # This function should save the generated images to the gen_data_dir, which is fixed as 'samples'
 # Begin of your code
@@ -37,8 +38,9 @@ if __name__ == "__main__":
         os.makedirs(gen_data_dir)
     #Begin of your code
     #Load your model and generate images in the gen_data_dir
-    model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
+    model = PixelCNN(nr_resnet=2, nr_filters=120, input_channels=3, nr_logistic_mix=5)
     model = model.to(device)
+    model.load_state_dict(torch.load('models/kennedy5_pcnn_cpen455_from_scratch_499.pth'))
     model = model.eval()
     my_sample(model=model, gen_data_dir=gen_data_dir)
     #End of your code
@@ -53,3 +55,9 @@ if __name__ == "__main__":
         print("Dimension {:d} fails!".format(192))
         
     print("Average fid score: {}".format(fid_score))
+    with open('predictions.csv', 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["fid",fid_score])
+
+
+# Path: models/kennedy_pcnn_cpen455_from_scratch_499.pth
