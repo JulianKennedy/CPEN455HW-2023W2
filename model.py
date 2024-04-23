@@ -96,11 +96,13 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
+        # written with the help of Github Copilot
         self.embedded_labels = torch.nn.Embedding(4, nr_filters)
 
 
 
 
+    # written with the help of Github Copilot
     def forward(self, x, labels, sample=False):
         # similar as done in the tf repo :
         if self.init_padding is not sample:
@@ -134,6 +136,7 @@ class PixelCNN(nn.Module):
         u  = u_list.pop()
         ul = ul_list.pop()
 
+        # written with the help of Github Copilot
         #embed the labels in the middle
         u = u + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(u.size())
         ul = ul + self.embedded_labels(labels).unsqueeze(-1).unsqueeze(-1).expand(ul.size())

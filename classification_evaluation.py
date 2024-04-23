@@ -20,7 +20,7 @@ NUM_CLASSES = len(my_bidict)
 # Write your code here
 # And get the predicted label, which is a tensor of shape (batch_size,)
 
-
+# written with the help of Github Copilot
 def get_label(model, model_input, device):
     #Begin of your code
     # run th model on the input and get the predicted label
@@ -98,6 +98,7 @@ if __name__ == '__main__':
                                              shuffle=False, 
                                              **kwargs)
 
+    # written with the help of Github Copilot
     #Write your code here
     #You should replace the random classifier with your trained model
     #Begin of your code
@@ -109,6 +110,7 @@ if __name__ == '__main__':
 
     #End of your code
     
+    # written with the help of Github Copilot
     model = model.to(device)
     #Attention: the path of the model is fixed to 'models/conditional_pixelcnn.pth'
     #You should save your model to this path
@@ -126,6 +128,7 @@ if __name__ == '__main__':
         writer = csv.writer(csvfile)
         writer.writerow(["id","label"])
 
+    # written with the help of Github Copilot
     for batch_idx, item in enumerate(tqdm(dataloader)):
         model_input, categories = item
         model_input = model_input.to(device)

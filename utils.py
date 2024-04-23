@@ -98,6 +98,7 @@ def discretized_mix_logistic_loss(x, l, isImageFlag=False):
     log_probs        = cond * log_cdf_plus + (1. - cond) * inner_out
     log_probs        = torch.sum(log_probs, dim=3) + log_prob_from_logits(logit_probs)
     
+    # written with the help of Github Copilot
     if isImageFlag == False:
         return -torch.sum(log_sum_exp(log_probs))
     else:
@@ -177,7 +178,7 @@ def right_shift(x, pad=None):
     pad = nn.ZeroPad2d((1, 0, 0, 0)) if pad is None else pad
     return pad(x)
 
-
+# written with the help of Github Copilot
 def sample(model, labels, sample_batch_size, obs, sample_op):
     model.train(False)
     with torch.no_grad():

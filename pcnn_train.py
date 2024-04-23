@@ -24,6 +24,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     deno =  args.batch_size * np.prod(args.obs) * np.log(2.)        
     loss_tracker = mean_tracker()
     
+    # written with the help of Github Copilot
     for batch_idx, item in enumerate(tqdm(data_loader)):
         model_input, label = item
         # print(label)
@@ -41,7 +42,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
             optimizer.step()
 
         
-        
+    # written with the help of Github Copilot
     if args.en_wandb:
         wandb.log({mode + "-Average-BPD" : loss_tracker.get_mean()})
         wandb.log({mode + "-epoch": epoch})
@@ -228,6 +229,7 @@ if __name__ == '__main__':
                       epoch = epoch,
                       mode = 'val')
         
+        # written with the help of Github Copilot
         if epoch % args.sampling_interval == 0:
             print('......sampling......')
             # create label tensor with random labels
